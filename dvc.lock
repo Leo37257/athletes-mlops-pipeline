@@ -1,0 +1,157 @@
+schema: '2.0'
+stages:
+  dbt_build:
+    cmd: mkdir -p data/marts && cd dbt_athletes && dbt build --profiles-dir .
+    deps:
+    - path: data/raw/athletes.csv
+      hash: md5
+      md5: ade8057a9ad4350dfade9180f021a96d
+      size: 71546909
+    - path: dbt_athletes/dbt_project.yml
+      hash: md5
+      md5: d46d214ad2b4981553e54ad7755d8ad4
+      size: 691
+    - path: dbt_athletes/models
+      hash: md5
+      md5: 4fb280023e0ac1a7ecfa451c7dd07fb6.dir
+      size: 6860
+      nfiles: 7
+    - path: dbt_athletes/snapshots
+      hash: md5
+      md5: f3bdf5246cc094edd709e73d0aa2953a.dir
+      size: 496
+      nfiles: 1
+    - path: dbt_athletes/tests
+      hash: md5
+      md5: 7fcf3bbb47eb45570a5cc22a6f8c691c.dir
+      size: 1233
+      nfiles: 4
+    - path: reports/raw_check.json
+      hash: md5
+      md5: 024504da5d77a467fff8d91a21d98505
+      size: 153
+    outs:
+    - path: data/athletes.duckdb
+      hash: md5
+      md5: e2774457f9d00b9e8d050da9b2d44fd2
+      size: 35139584
+    - path: data/marts
+      hash: md5
+      md5: bd2670e5ad57a8c2d2602e04f41807fc.dir
+      size: 5751648
+      nfiles: 4
+  feast_materialize:
+    cmd: python src/feast_materialize.py
+    deps:
+    - path: data/marts
+      hash: md5
+      md5: bd2670e5ad57a8c2d2602e04f41807fc.dir
+      size: 5751648
+      nfiles: 4
+    - path: feature_repo/definitions.py
+      hash: md5
+      md5: dd8ce36fcc6932dea2de04f35fe80f7e
+      size: 2351
+    - path: feature_repo/feature_store.yaml
+      hash: md5
+      md5: 3ed2fc9b9282b65cf9d3762cbe7a0f34
+      size: 189
+    - path: src/feast_materialize.py
+      hash: md5
+      md5: b70f6a00e1314bb0d621ea6348eb8ab1
+      size: 1410
+    outs:
+    - path: feature_repo/data/online_store.db
+      hash: md5
+      md5: b4a6fa64924cf720acddea84832e109f
+      size: 89153536
+    - path: feature_repo/data/registry.db
+      hash: md5
+      md5: 3d3b5e9005284c9cd02d893e03a2fe80
+      size: 3227
+  train:
+    cmd: python src/train.py
+    deps:
+    - path: data/marts/athletes_v2_features.parquet
+      hash: md5
+      md5: 178a61fe55b0fe0f9771ce7b6f8d6462
+      size: 489256
+    - path: feature_repo/data/registry.db
+      hash: md5
+      md5: 3d3b5e9005284c9cd02d893e03a2fe80
+      size: 3227
+    - path: src/lineage.py
+      hash: md5
+      md5: 0a65d3cf1a54a00eef1140f504a1208f
+      size: 2490
+    - path: src/train.py
+      hash: md5
+      md5: 37e04ccccb928e3b8bff6f037da377ba
+      size: 4350
+    params:
+      params.yaml:
+        train:
+          random_state: 42
+          test_size: 0.2
+          training_as_of: '2026-03-01'
+          model:
+            max_iter: 300
+            learning_rate: 0.08
+            max_leaf_nodes: 31
+    outs:
+    - path: metrics.json
+      hash: md5
+      md5: efe163b58f7fefd4a385b577d0b7be16
+      size: 269
+    - path: models/model.joblib
+      hash: md5
+      md5: f9ca9994310213c55ef0b1eaa7f61546
+      size: 469129
+  monitor:
+    cmd: python src/monitor.py
+    deps:
+    - path: data/athletes.duckdb
+      hash: md5
+      md5: e2774457f9d00b9e8d050da9b2d44fd2
+      size: 35139584
+    - path: data/marts/athletes_v1.parquet
+      hash: md5
+      md5: 0563f4e10a66efb9c1ad21b6387af486
+      size: 3338863
+    - path: data/marts/athletes_v2.parquet
+      hash: md5
+      md5: b1bf0aee46931f7436550b97274bd9da
+      size: 685886
+    - path: src/monitor.py
+      hash: md5
+      md5: 4e0e6f9e199b7264241b143b39f37b66
+      size: 4511
+    params:
+      params.yaml:
+        monitor:
+          drift_share_threshold: 0.5
+    outs:
+    - path: reports/drift_summary.json
+      hash: md5
+      md5: 285c874f76f538513408cea74e48d67e
+      size: 3742
+    - path: reports/drift_v1_v2.html
+      hash: md5
+      md5: d7b15064f862ab2a767f7a8087469625
+      size: 4264593
+  prepare:
+    cmd: python src/prepare_check.py
+    deps:
+    - path: data/raw/athletes.csv
+      hash: md5
+      md5: ade8057a9ad4350dfade9180f021a96d
+      size: 71546909
+    - path: src/prepare_check.py
+      hash: md5
+      md5: ce60b0fa8cb750d35e7003e65d6775ed
+      size: 1398
+    outs:
+    - path: reports/raw_check.json
+      hash: md5
+      md5: 024504da5d77a467fff8d91a21d98505
+      size: 153

@@ -1,0 +1,10 @@
+train:
+  random_state: 42
+  test_size: 0.2
+  training_as_of: "2026-03-01"     # point-in-time cut for Feast: features must be known by this date
+  model:
+    max_iter: 300
+    learning_rate: 0.08
+    max_leaf_nodes: 31
+monitor:
+  drift_share_threshold: 0.5       # dataset counts as drifted if more than half of the shared columns drift

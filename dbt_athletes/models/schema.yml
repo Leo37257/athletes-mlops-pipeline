@@ -1,0 +1,56 @@
+version: 2
+
+models:
+  - name: stg_athletes
+    description: Typed copy of the raw athlete export, no filtering.
+    columns:
+      - name: athlete_id
+        description: Raw id. Three raw rows have no id, so it is not tested for not_null here; the feature marts drop those rows.
+  - name: athletes_v1
+    description: Version 1 dataset. Rows with all four lifts present, plus total_lift.
+    columns:
+      - name: deadlift
+        tests: [not_null]
+      - name: candj
+        tests: [not_null]
+      - name: snatch
+        tests: [not_null]
+      - name: backsq
+        tests: [not_null]
+      - name: total_lift
+        tests: [not_null]
+  - name: athletes_v2
+    description: Version 2 dataset. Cleaned and feature-engineered, ready for modelling.
+    columns:
+      - name: gender
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Male', 'Female']
+      - name: age_group
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['18-24', '25-34', '35-44', '45-59', '60+']
+      - name: bmi
+        tests: [not_null]
+      - name: total_lift
+        tests: [not_null]
+  - name: athletes_v1_features
+    description: Feast source for version 1. One row per athlete_id.
+    columns:
+      - name: athlete_id
+        tests: [unique, not_null]
+      - name: event_timestamp
+        tests: [not_null]
+  - name: athletes_v2_features
+    description: Feast source for version 2. One row per athlete_id.
+    columns:
+      - name: athlete_id
+        tests: [unique, not_null]
+      - name: event_timestamp
+        tests: [not_null]
+  - name: schema_diff_v1_v2
+    description: Column-level schema change between version 1 and version 2.

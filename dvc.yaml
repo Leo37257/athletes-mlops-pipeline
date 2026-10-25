@@ -1,0 +1,67 @@
+stages:
+  prepare:
+    desc: gate - raw file must equal the DVC-tracked version and have the expected shape
+    cmd: python src/prepare_check.py
+    deps:
+      - data/raw/athletes.csv
+      - src/prepare_check.py
+    outs:
+      - reports/raw_check.json:
+          cache: false
+  dbt_build:
+    desc: raw CSV -> typed staging -> v1/v2 marts + Feast source tables, with dbt tests and snapshot
+    cmd: mkdir -p data/marts && cd dbt_athletes && dbt build --profiles-dir .
+    deps:
+      - reports/raw_check.json
+      - data/raw/athletes.csv
+      - dbt_athletes/dbt_project.yml
+      - dbt_athletes/models
+      - dbt_athletes/tests
+      - dbt_athletes/snapshots
+    outs:
+      - data/marts
+      - data/athletes.duckdb:
+          cache: false
+          persist: true        # keeps the dbt snapshot history between runs
+  feast_materialize:
+    desc: feast apply + materialize the dbt feature tables into the online store
+    cmd: python src/feast_materialize.py
+    deps:
+      - data/marts
+      - feature_repo/definitions.py
+      - feature_repo/feature_store.yaml
+      - src/feast_materialize.py
+    outs:
+      - feature_repo/data/registry.db:
+          cache: false
+      - feature_repo/data/online_store.db:
+          cache: false
+  train:
+    desc: point-in-time training set from Feast, GBM regression, lineage logged to MLflow
+    cmd: python src/train.py
+    deps:
+      - data/marts/athletes_v2_features.parquet
+      - feature_repo/data/registry.db
+      - src/train.py
+      - src/lineage.py
+    params:
+      - train
+    outs:
+      - models/model.joblib
+    metrics:
+      - metrics.json:
+          cache: false
+  monitor:
+    desc: schema + distribution drift, baseline v1 vs current v2
+    cmd: python src/monitor.py
+    deps:
+      - data/marts/athletes_v1.parquet
+      - data/marts/athletes_v2.parquet
+      - data/athletes.duckdb
+      - src/monitor.py
+    params:
+      - monitor
+    outs:
+      - reports/drift_v1_v2.html
+      - reports/drift_summary.json:
+          cache: false

@@ -1,0 +1,7 @@
+athletes:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: ../data/athletes.duckdb
+      threads: 4

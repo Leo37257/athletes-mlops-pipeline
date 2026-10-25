@@ -1,0 +1,16 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - name: dbt project parses (no data needed)
+        run: cd dbt_athletes && dbt parse --profiles-dir .
+      - name: feature definitions import
+        run: cd feature_repo && python -c "import definitions"
+      - name: tests (data-dependent ones skip without the raw CSV)
+        run: python -m pytest -q

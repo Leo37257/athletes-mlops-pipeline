@@ -1,0 +1,27 @@
+name: athletes
+version: "1.0.0"
+config-version: 2
+profile: athletes
+
+model-paths: ["models"]
+test-paths: ["tests"]
+snapshot-paths: ["snapshots"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+vars:
+  raw_path: "../data/raw/athletes.csv"
+  marts_dir: "../data/marts"
+  # dataset-version dates: Feast needs an event timestamp, and each schema version is one point in time
+  v1_as_of: "2026-01-01"
+  v2_as_of: "2026-02-01"
+  # regression guard: row counts produced by the original pandas notebook (src/reference_clean.py)
+  expected_v1_rows: 85191
+  expected_v2_rows: 30147
+
+models:
+  athletes:
+    staging:
+      +materialized: table
+    marts:
+      +materialized: external

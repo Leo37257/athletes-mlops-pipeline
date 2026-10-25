@@ -1,0 +1,181 @@
+{
+  "baseline": {
+    "version": "v1",
+    "rows": 85191
+  },
+  "current": {
+    "version": "v2",
+    "rows": 30147
+  },
+  "schema": {
+    "added in v2": [
+      "age_group",
+      "bmi",
+      "height_m",
+      "weight_kg"
+    ],
+    "dropped in v2": [
+      "affiliate",
+      "fgonebad",
+      "filthy50",
+      "fran",
+      "grace",
+      "helen",
+      "name",
+      "pullups",
+      "run400",
+      "run5k",
+      "team",
+      "train"
+    ],
+    "kept": [
+      "age",
+      "athlete_id",
+      "background",
+      "backsq",
+      "candj",
+      "deadlift",
+      "eat",
+      "experience",
+      "gender",
+      "height",
+      "howlong",
+      "region",
+      "schedule",
+      "snatch",
+      "total_lift",
+      "weight"
+    ]
+  },
+  "schema_changed": true,
+  "distribution": {
+    "columns_checked": 10,
+    "columns_drifted": 0,
+    "share_drifted": 0.0,
+    "dataset_drift": false,
+    "evidently_count": {
+      "count": 0.0,
+      "share": 0.0
+    },
+    "columns": {
+      "age": {
+        "distance": 0.0599,
+        "threshold": 0.1,
+        "method": "Wasserstein distance (normed)",
+        "drifted": false
+      },
+      "height": {
+        "distance": 0.0036,
+        "threshold": 0.1,
+        "method": "Wasserstein distance (normed)",
+        "drifted": false
+      },
+      "weight": {
+        "distance": 0.0442,
+        "threshold": 0.1,
+        "method": "Wasserstein distance (normed)",
+        "drifted": false
+      },
+      "candj": {
+        "distance": 0.0039,
+        "threshold": 0.1,
+        "method": "Wasserstein distance (normed)",
+        "drifted": false
+      },
+      "snatch": {
+        "distance": 0.0043,
+        "threshold": 0.1,
+        "method": "Wasserstein distance (normed)",
+        "drifted": false
+      },
+      "deadlift": {
+        "distance": 0.008,
+        "threshold": 0.1,
+        "method": "Wasserstein distance (normed)",
+        "drifted": false
+      },
+      "backsq": {
+        "distance": 0.0074,
+        "threshold": 0.1,
+        "method": "Wasserstein distance (normed)",
+        "drifted": false
+      },
+      "total_lift": {
+        "distance": 0.0076,
+        "threshold": 0.1,
+        "method": "Wasserstein distance (normed)",
+        "drifted": false
+      },
+      "gender": {
+        "distance": 0.0301,
+        "threshold": 0.1,
+        "method": "Jensen-Shannon distance",
+        "drifted": false
+      },
+      "region": {
+        "distance": 0.0439,
+        "threshold": 0.1,
+        "method": "Jensen-Shannon distance",
+        "drifted": false
+      }
+    }
+  },
+  "data_quality": {
+    "age": {
+      "null_rate_v1": 0.0,
+      "null_rate_v2": 0.0,
+      "max_v1": 125.0,
+      "max_v2": 56.0
+    },
+    "height": {
+      "null_rate_v1": 0.056,
+      "null_rate_v2": 0.0,
+      "max_v1": 8388607.0,
+      "max_v2": 83.0
+    },
+    "weight": {
+      "null_rate_v1": 0.0971,
+      "null_rate_v2": 0.0,
+      "max_v1": 9008.0,
+      "max_v2": 474.0
+    },
+    "candj": {
+      "null_rate_v1": 0.0,
+      "null_rate_v2": 0.0,
+      "max_v1": 8388607.0,
+      "max_v2": 390.0
+    },
+    "snatch": {
+      "null_rate_v1": 0.0,
+      "null_rate_v2": 0.0,
+      "max_v1": 8388607.0,
+      "max_v2": 386.0
+    },
+    "deadlift": {
+      "null_rate_v1": 0.0,
+      "null_rate_v2": 0.0,
+      "max_v1": 8388607.0,
+      "max_v2": 1000.0
+    },
+    "backsq": {
+      "null_rate_v1": 0.0,
+      "null_rate_v2": 0.0,
+      "max_v1": 8388607.0,
+      "max_v2": 882.0
+    },
+    "total_lift": {
+      "null_rate_v1": 0.0,
+      "null_rate_v2": 0.0,
+      "max_v1": 33554428.0,
+      "max_v2": 2135.0
+    },
+    "gender": {
+      "null_rate_v1": 0.0,
+      "null_rate_v2": 0.0
+    },
+    "region": {
+      "null_rate_v1": 0.2344,
+      "null_rate_v2": 0.0
+    }
+  }
+}
