@@ -17,3 +17,4 @@ data/athletes.duckdb
 data/athletes.duckdb.wal
 feature_repo/data/*.db
 dbt_athletes/.user.yml
+.demo/

@@ -98,6 +98,7 @@ Every training run carries these parameters, so a model can be traced to the exa
 make setup                       # Python 3.12 env (uv)
 # put the dataset at data/raw/athletes.csv, then:  dvc add data/raw/athletes.csv
 make all                         # dvc repro: the whole pipeline from the raw file
+make demo                        # no dataset? run everything on the bundled sample
 make test                        # dbt tests + pandas-vs-SQL parity
 make mlflow                      # runs and lineage at http://localhost:5000
 make airflow                     # Airflow at http://localhost:8080, then trigger athletes_mlops_pipeline
@@ -105,6 +106,23 @@ make airflow                     # Airflow at http://localhost:8080, then trigge
 
 The raw file is 71 MB and is **not** in the repository. `reports/raw_check.json` records the expected md5
 (`ade8057a9ad4350dfade9180f021a96d`) and the `prepare` stage refuses to run on any other file.
+
+## Try it without the dataset
+
+```bash
+make demo        # about a minute; runs in .demo/, never touches the real data, DVC state or MLflow history
+```
+
+`data/sample/athletes_sample.csv` is a 5,300-row random sample (2,500 rows that survive the v2 cleaning, 2,500 that only
+reach v1, 300 incomplete rows) with the `name`, `team` and `affiliate` columns blanked. It runs the same dbt models, tests,
+Feast views, training and drift report. The regression guard is recomputed for the sample (5,000 v1 rows, 2,500 v2 rows),
+so the SQL is still checked against the pandas reference. Expect different numbers than the full run: on the sample the
+model reaches RMSE about 147 lb (baseline 272 lb) and the drift check flags 3 of 10 shared columns.
+
+## Data source
+
+The dataset (the CrossFit Games athlete export, 423,006 rows) was **provided by the course instructor** for UChicago
+ADSP 32021 (MLOps), so the full file is not redistributed here. Only the blanked sample above is published.
 
 ## Design notes and limits
 

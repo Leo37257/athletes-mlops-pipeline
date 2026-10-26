@@ -17,6 +17,8 @@ def sha256_file(path: Path) -> str:
 
 
 def dvc_md5(dvc_file: Path) -> str:
+    if not dvc_file.exists():          # demo workspace: the sample is not DVC-tracked
+        return "not-dvc-tracked"
     m = re.search(r"md5:\s*([0-9a-f]{32})", dvc_file.read_text())
     return m.group(1) if m else "unknown"
 

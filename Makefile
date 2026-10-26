@@ -1,8 +1,10 @@
-.PHONY: setup all test dbt-docs mlflow airflow clean-airflow
+.PHONY: setup all demo test dbt-docs mlflow airflow clean-airflow
 setup:            ## python env + dependencies
 	uv venv --python 3.12 .venv && . .venv/bin/activate && uv pip install -r requirements.txt
 all:              ## one command: raw data check -> dbt -> Feast -> train -> drift monitor
 	. .venv/bin/activate && dvc repro
+demo:             ## whole pipeline on the 5,300-row sample, no dataset needed
+	. .venv/bin/activate && bash scripts/demo.sh
 test:             ## dbt tests + pandas-vs-SQL parity tests
 	. .venv/bin/activate && cd dbt_athletes && dbt test --profiles-dir . && cd .. && python -m pytest -q
 mlflow:           ## browse runs and lineage at http://localhost:5000
