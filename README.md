@@ -104,6 +104,9 @@ make mlflow                      # runs and lineage at http://localhost:5000
 make airflow                     # Airflow at http://localhost:8080, then trigger athletes_mlops_pipeline
 ```
 
+CI: `docs/ci.yml.example` runs `dbt parse`, imports the Feast definitions and runs the tests; copy it to
+`.github/workflows/ci.yml` to enable it.
+
 The raw file is 71 MB and is **not** in the repository. `reports/raw_check.json` records the expected md5
 (`ade8057a9ad4350dfade9180f021a96d`) and the `prepare` stage refuses to run on any other file.
 
